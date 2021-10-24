@@ -1,12 +1,13 @@
 
 
-#include "../../Capsaicin/src/test.h"
+#include<Capsaicin.h>
 
 
 
-int main()
+int main( int argc, char* argv[] )
 {
-    Capsaicin::HW hw;
+    Capsaicin::Option_Field copts( argc, argv );
+    Capsaicin::Capsaicin
 
     return 0;
 }

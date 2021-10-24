@@ -26,8 +26,8 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 group "Dependencies"
 	include "vendor/premake"
-	include "Capsaicin/vendor/Glad"
-	include "Capsaicin/vendor/GLFW"
+	include "Capsaicin/vendor"
 group ""
 
+include "Capsaicin"
 include "Test_App"

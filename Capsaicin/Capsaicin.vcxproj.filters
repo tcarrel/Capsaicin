@@ -1,27 +1,54 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="Capsaicin">
+      <UniqueIdentifier>{B02B72B4-1C96-262B-65D4-D7D0D17D0480}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="Capsaicin\core">
+      <UniqueIdentifier>{28AA9B37-1478-8F3D-FD0B-0064E9786BA2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Capsaicin\utilities">
+      <UniqueIdentifier>{3BCC024C-A72D-E059-309B-260C9CFB1619}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\test.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Capsaicin.h" />
+    <ClInclude Include="src\Capsaicin\core\assert.h">
+      <Filter>Capsaicin\core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Capsaicin\core\capsaicin.h">
+      <Filter>Capsaicin\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Capsaicin\core\core.h">
+      <Filter>Capsaicin\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Capsaicin\core\log.h">
+      <Filter>Capsaicin\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Capsaicin\core\math.h">
+      <Filter>Capsaicin\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Capsaicin\core\options.h">
+      <Filter>Capsaicin\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Capsaicin\utilities\text_utilities.h">
+      <Filter>Capsaicin\utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cp-pch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Capsaicin\core\capsaicin.cpp">
+      <Filter>Capsaicin\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Capsaicin\core\log.cpp">
+      <Filter>Capsaicin\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Capsaicin\core\options.cpp">
+      <Filter>Capsaicin\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Capsaicin\utilities\text_utilities.cpp">
+      <Filter>Capsaicin\utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cp-pch.cpp" />
   </ItemGroup>
 </Project>

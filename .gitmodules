@@ -1,0 +1,6 @@
+[submodule "Capsaicin/vendor/spdlog"]
+	path = Capsaicin/vendor/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "Capsaicin/vendor/GLFW"]
+	path = Capsaicin/vendor/GLFW
+	url = https://github.com/glfw/glfw

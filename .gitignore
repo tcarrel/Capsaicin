@@ -11,7 +11,10 @@
 **/bin/
 bin-int/
 
-Capsaicin/vendor/**
+Capsaicin/vendor/VulkanSDK
+
+## Will be left as ignored until project is finished being setup
+Capsaicin/vendor/glad
 
 
 
