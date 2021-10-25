@@ -6,8 +6,10 @@
 
 int main( int argc, char* argv[] )
 {
-    Capsaicin::Option_Field copts( argc, argv );
-    Capsaicin::Capsaicin
+    Capsaicin::Capsaicin_Settings settings( argc, argv );
+    Capsaicin::Capsaicin app( settings );
+
+
 
     return 0;
 }

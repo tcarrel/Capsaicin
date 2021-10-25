@@ -12,7 +12,8 @@ namespace Capsaicin
 
 
 
-    Capsaicin::Capsaicin( Option_Field settings )
+    Capsaicin::Capsaicin( Capsaicin_Settings settings )
     {
     }
+
 }

@@ -78,7 +78,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="..\..\Capsaicin\premake5.lua" />
-    <None Include="..\..\Capsaicin\vendor\premake5.lua" />
     <None Include="..\..\Test_App\premake5.lua" />
     <None Include="..\..\premake5.lua" />
     <None Include="premake5.lua" />

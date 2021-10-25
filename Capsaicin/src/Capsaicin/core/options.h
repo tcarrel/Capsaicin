@@ -30,7 +30,7 @@ namespace Capsaicin
 
 
         // String
-        Application_Name
+        Executable_Name
     };
 
     std::string get_field_string( Option_Field field );
@@ -39,39 +39,15 @@ namespace Capsaicin
 
     struct Capsaicin_Settings
     {
-        enum class Option_Value_Type
-        {
-            Boolean          = BIT( 0 ),
-            Unsigned_Integer = BIT( 1 ),
-            Signed_Interger  = BIT( 2 ),
-            Floating_Point   = BIT( 3 ),
-            String           = BIT( 4 ),
 
-            error            = 0
-        };
-
-        enum class Initialization_Status
-        {
-            FAILURE_NO_FALLBACK   = -4,
-            ERROR_DEFAULTS_USED   = -3,
-            MINOR_ERROR_IGNORING  = -2,
-            MESSAGES_WERE_SET     = -1,
-            INCOMPLETE            =  0,
-            SUCCESS_WITH_MESSAGES =  1,
-            SUCCESS               =  2
-        };
-
+        Capsaicin_Settings();
         Capsaicin_Settings( int argc, char* argv[], std::filesystem::path ini_file_path = "" );
 
-        Initialization_Status init_status() const;
-
-        Option_Value_Type get_option_value_types( Option_Field option );
-
-        bool        get_boolean_value( Option_Field field );
-        uint64_t    get_unsigned_integer_value( Option_Field field );
-        int64_t     get_integer_value( Option_Field field );
-        long double get_float_value( Option_Field field );
-        std::string get_string_value( Option_Field field );
+        bool set_start_fullsceen( std::string start_fullscreen );
+        bool set_screen_width( std::string pixels_wide );
+        bool set_screen_height( std::string  pixels_high );
+        bool set_log_level( std::string log_level );
+        bool set_exe_name( std::string exe );
 
     private:
 
@@ -79,48 +55,34 @@ namespace Capsaicin
         void parse_ini_file_settings(std::filesystem::path path);
         void parse_command_line_args( int argc, char* argv[] );
 
-        void set_status( Initialization_Status update_to );
+        bool parse_boolean( std::string boolean_string, bool& return_value );
 
         enum class Boolean_Options
         {
             Start_Fullscreen,
 
-            Quantity,
-
-            error
+            Quantity
         };
         enum class Unsigned_Integer_Options
         {
-            Screen_Width,
-            Screen_Height,
-            Log_Level,
+            Screen_Width, Screen_Height, Log_Level,
 
-            Quantity,
-
-            error
-        }; 
+            Quantity
+        };
         enum class Signed_Integer_Options
         {
-            Quantity,
-
-            error
+            Quantity
         };
         enum class Floating_Point_Options
         {
-            Quantity,
-
-            error
+            Quantity
         };
         enum class String_Options
         {
-            Application_Name,
+            Executable_Name,
 
-            Quantity,
-
-            error
+            Quantity
         };
-
-        static Initialization_Status s_init_status;
 
         static std::bitset<static_cast<size_t>( Boolean_Options::Quantity )>                    s_bool_settings;
         static std::array<uint64_t, static_cast<size_t>( Unsigned_Integer_Options::Quantity )>  s_uint_settings;

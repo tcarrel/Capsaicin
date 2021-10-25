@@ -26,7 +26,8 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 group "Dependencies"
 	include "vendor/premake"
-	include "Capsaicin/vendor"
+	include "Capsaicin/vendor/premake5.glad.lua"
+	include "Capsaicin/vendor/premake5.GLFW.lua"
 group ""
 
 include "Capsaicin"

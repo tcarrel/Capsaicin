@@ -10,7 +10,7 @@ namespace Capsaicin
 {
     struct Capsaicin
     {
-        Capsaicin( Option_Field settings);
+        Capsaicin( Capsaicin_Settings settings);
 
     private:
 

@@ -6,6 +6,11 @@
 
 
 
+constexpr bool FAILURE{ false };
+constexpr bool SUCCESS{ !FAILURE };
+
+
+
 #if defined(CP_DEBUG)
 #   if defined(CP_PLATFORM_WINDOWS)
 #       define CP_DEBUG_BREAK() __debugbreak()
@@ -38,6 +43,8 @@ constexpr bool CP_START_FULLSCREEN{ false };
 constexpr bool CP_START_FULLSCREEN{ true };
 #endif
 
+constexpr uint64_t CP_DEFAULT_SCREEN_WIDTH{ 1920 };
+constexpr uint64_t CP_DEFAULT_SCREEN_HEIGHT{ 1080 };
 
 #define CP_EXPAND_MACRO(x) x
 #define CP_STRINGIFY_MACRO(x) #x

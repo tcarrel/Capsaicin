@@ -1,7 +1,8 @@
 #include "cp-pch.h"
 
-#include "core.h"
-#include "options.h"
+#include "Capsaicin/core/core.h"
+#include "Capsaicin/core/math.h"
+#include "Capsaicin/core/options.h"
 
 #include "Capsaicin/utilities/text_utilities.h"
 
@@ -12,13 +13,6 @@
 
 namespace Capsaicin
 {
-    Capsaicin_Settings::Initialization_Status Capsaicin_Settings::s_init_status
-    {
-        Capsaicin_Settings::Initialization_Status::INCOMPLETE
-    };
-
-
-
     std::bitset<static_cast<size_t>( Capsaicin_Settings::Boolean_Options::Quantity )> 
         Capsaicin_Settings::s_bool_settings;
     std::array<uint64_t, static_cast<size_t>( Capsaicin_Settings::Unsigned_Integer_Options::Quantity )>
@@ -32,30 +26,19 @@ namespace Capsaicin
 
 
 
-    Capsaicin_Settings::Capsaicin_Settings( int argc, char* argv[], std::filesystem::path ini_file_path )
+    Capsaicin_Settings::Capsaicin_Settings()
     {
         set_defaults();
-        parse_ini_file_settings( ini_file_path );
-        parse_command_line_args( argc, argv );
-
-        switch( s_init_status )
-        {
-        case Initialization_Status::MESSAGES_WERE_SET:
-            s_init_status = Initialization_Status::SUCCESS_WITH_MESSAGES;
-            return;
-        case Initialization_Status::INCOMPLETE:
-            s_init_status = Initialization_Status::SUCCESS;
-            return;
-        default:
-            return;
-        }
     }
 
-    
-    
-    Capsaicin_Settings::Initialization_Status Capsaicin_Settings::init_status() const
+
+
+    Capsaicin_Settings::Capsaicin_Settings( int argc, char* argv[], std::filesystem::path ini_file_path )
+        :
+        Capsaicin_Settings()
     {
-        return s_init_status;
+        parse_ini_file_settings( ini_file_path );
+        parse_command_line_args( argc, argv );
     }
 
 
@@ -64,24 +47,33 @@ namespace Capsaicin
     {
         s_bool_settings[ static_cast<size_t>( Boolean_Options::Start_Fullscreen ) ] = CP_START_FULLSCREEN;
         
-        s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Screen_Width ) ] = 1024;
-        s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Screen_Height ) ] = 768;
+        s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Screen_Width ) ] = CP_DEFAULT_SCREEN_WIDTH;
+        s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Screen_Height ) ] = CP_DEFAULT_SCREEN_HEIGHT;
 
-        s_str_settings[ static_cast<size_t>( String_Options::Application_Name ) ] = "Capsaicin Rendered Application";
+        s_str_settings[ static_cast<size_t>( String_Options::Executable_Name ) ] = "Capsaicin Rendered Application";
     }
 
 
 
     void Capsaicin_Settings::parse_ini_file_settings( std::filesystem::path path )
     {
-        // TODO.
+        if( std::filesystem::exists( path ) )
+        {
+            // TODO: parse file.
+        }
+        else
+        {
+            // TODO: write default .ini file.
+        }
     }
 
 
 
     void Capsaicin_Settings::parse_command_line_args( int argc, char* argv[] )
     {
-        s_str_settings[ static_cast<size_t>( String_Options::Application_Name ) ] = argv[ 0 ];
+        CP_ASSERT( argc >= 1, "<argc> Must be at least 1." );
+
+        s_str_settings[ static_cast<size_t>( String_Options::Executable_Name ) ] = argv[ 0 ];
 
         for( int i{ 1 }; i < argc; ++i )
         {
@@ -91,172 +83,101 @@ namespace Capsaicin
 
     
     
-    void Capsaicin_Settings::set_status( Initialization_Status update_to )
+    bool Capsaicin_Settings::parse_boolean( std::string boolean_string, bool& return_value )
     {
-        const auto current_status{ static_cast<int>( s_init_status ) };
-        const auto new_status{ static_cast<int>( update_to ) };
+        static const std::unordered_map<std::string, bool> options{
+            { "true", true},
+            { "false", false},
+            { "0", false },
+            { "1", true },
+            { "on", true },
+            { "off", false }
+        };
 
-        if( new_status < current_status )
+        auto position{ options.find( boolean_string ) };
+
+        if( position == options.end() )
         {
-            s_init_status = update_to;
+            return FAILURE;
         }
+
+        return_value = position->second;
+        return SUCCESS;
     }
 
 
 
-    Capsaicin_Settings::Option_Value_Type Capsaicin_Settings::get_option_value_types( Option_Field option )
+    bool Capsaicin_Settings::set_start_fullsceen( std::string start_fullscreen )
     {
-        switch( option )
-        {
-        case Option_Field::Start_Fullscreen:
-            return Option_Value_Type::Boolean;
-        case Option_Field::Screen_Width:  [[fallthrough]];
-        case Option_Field::Screen_Height: [[fallthrough]];
-        case Option_Field::Log_Level:
-            return Option_Value_Type::Unsigned_Integer;
-        case Option_Field::Application_Name:
-            return Option_Value_Type::String;
+        bool set_to{ CP_START_FULLSCREEN };
 
-        default:
-            // static assert?
-            return Option_Value_Type::error;
+        if( parse_boolean( start_fullscreen, set_to ) == SUCCESS )
+        {
+            s_bool_settings[ static_cast<size_t>( Boolean_Options::Start_Fullscreen ) ] = set_to;
+            return SUCCESS;
         }
+
+        CP_ERROR( "Unknown value for start_fullscreen.  {" + start_fullscreen + "}.  Boolean Expected." );
+        return FAILURE;
     }
 
 
 
-    bool Capsaicin_Settings::get_boolean_value( Option_Field field )
+    bool Capsaicin_Settings::set_screen_width( std::string pixels_wide )
     {
-        switch( field )
-        {
-        case Option_Field::Start_Fullscreen:
-            return s_bool_settings[ static_cast<size_t>( Boolean_Options::Start_Fullscreen ) ];
-
-        default:
-            CP_CORE_WARN( "Could not convert " + get_field_string( field ) + " to bool.  Returning <false>." );
-            return false;
-        }
+        // TODO: Add try catch.
+        s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Screen_Width ) ] = std::stoull( pixels_wide );
+        return SUCCESS;
     }
 
 
 
-    uint64_t Capsaicin_Settings::get_unsigned_integer_value( Option_Field field )
+    bool Capsaicin_Settings::set_screen_height( std::string pixels_high )
     {
-        switch( field )
-        {
-        case Option_Field::Start_Fullscreen:
-            return static_cast<uint64_t>( s_bool_settings[ static_cast<size_t>( Boolean_Options::Start_Fullscreen ) ] );
-        case Option_Field::Screen_Width:
-            return s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Screen_Width ) ];
-        case Option_Field::Screen_Height:
-            return s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Screen_Height ) ];
-        case Option_Field::Log_Level:
-            return s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Log_Level ) ];
-        default:
-            CP_CORE_WARN( "Could not convert "
-                          + get_field_string( field )
-                          + " to unsigned int.  Returning <18446744073709551615>." );
-            return 0xFFFF'FFFF'FFFF'FFFF;
-        }
+        // TODO: ^
+        s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Screen_Height ) ] = std::stoull( pixels_high );
+        return SUCCESS;
     }
 
 
 
-    int64_t Capsaicin_Settings::get_integer_value( Option_Field field )
+    bool Capsaicin_Settings::set_log_level( std::string log_level )
     {
-        switch( field )
+        static const std::unordered_map<std::string, spdlog::level::level_enum> levels{
+            { "mute",       spdlog::level::level_enum::critical },
+            { "off",        spdlog::level::level_enum::critical },
+            { "0",          spdlog::level::level_enum::critical },
+            { "quiet",      spdlog::level::level_enum::err },
+            { "min",        spdlog::level::level_enum::err },
+            { "minimum",    spdlog::level::level_enum::err },
+            { "1",          spdlog::level::level_enum::err },
+            { "warn",       spdlog::level::level_enum::warn },
+            { "2",          spdlog::level::level_enum::warn },
+            { "verbose",    spdlog::level::level_enum::trace },
+            { "everything", spdlog::level::level_enum::trace },
+            { "3",          spdlog::level::level_enum::trace } };
+
+        auto pos{ levels.find( log_level ) };
+        if( pos == levels.end() )
         {
-        case Option_Field::Start_Fullscreen:
-            return static_cast<int64_t>( s_bool_settings[ static_cast<size_t>( Boolean_Options::Start_Fullscreen ) ] );
-        case Option_Field::Screen_Width:
-            return static_cast<int64_t>( s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Screen_Width ) ] );
-        case Option_Field::Screen_Height:
-            return static_cast<int64_t>( s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Screen_Height ) ] );
-        case Option_Field::Log_Level:
-            return static_cast<int64_t>( s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Log_Level ) ] );
-        default:
-            CP_CORE_WARN( "Could not convert " + get_field_string( field ) + " to signed int.  Returning <-9,223,372,036,854,775,808>" );
-            return -static_cast<int64_t>( 9'223'372'036'854'775'808 );
+            CP_ERROR( "Log level {" + log_level + "} could not be interpreted." );
+            CP_INFO( "  Possible Levels are:" );
+            CP_INFO( "      mute / off / 0            : Dissable almost all logging." );
+            CP_INFO( "      quiet / min / minimum / 1 : Only show error messages." );
+            CP_INFO( "      warn / 2                  : Show errors and warnings." );
+            CP_INFO( "      verbose / everything / 3  : Log *everything*." );
+            return FAILURE;
         }
+
+        s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Log_Level ) ] = pos->second;
+        return SUCCESS;
     }
 
-
-
-    long double Capsaicin_Settings::get_float_value( Option_Field field )
-    {
-        long double return_value{ 0 };
-        switch( field )
-        {
-        case Option_Field::Start_Fullscreen:
-            return_value = static_cast<long double>( s_bool_settings[ static_cast<size_t>( Boolean_Options::Start_Fullscreen ) ] );
-            CP_CORE_WARN( "Casting boolean value <{}> was cast to floating point value <{}>.",
-                          s_bool_settings[ static_cast<size_t>( Boolean_Options::Start_Fullscreen ) ],
-                          return_value );
-            return return_value;
-        case Option_Field::Screen_Width:
-            return_value = static_cast<long double>( s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Screen_Width ) ] );
-            CP_CORE_WARN( "Casting unsigned int value <{}> to floating point <{}>.",
-                          s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Screen_Width ) ],
-                          return_value );
-            return return_value;
-        case Option_Field::Screen_Height:
-            return_value = static_cast<long double>( s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Screen_Height ) ] );
-            CP_CORE_WARN( "Casting unsigned int value <{}> to floating point <{}>.",
-                          s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Screen_Height ) ],
-                          return_value );
-            return return_value;
-        case Option_Field::Log_Level:
-            return_value = static_cast<long double>( s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Log_Level ) ] );
-            CP_CORE_WARN( "Casting unsigned int value <{}> to floating point <{}>.",
-                          s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Log_Level ) ],
-                          return_value );
-            return return_value;
-        default:
-            CP_CORE_ERROR( "Could not convert {} to floating point.  Returning <0.0>", get_field_string( field ) );
-            return 0.0;
-        }
-    }
-
-
-
-    std::string Capsaicin_Settings::get_string_value( Option_Field field )
-    {
-        switch( field )
-        {
-        case Option_Field::Start_Fullscreen:
-            CP_CORE_WARN( "Returning bool ({}) as a string.", get_field_string( field ) );
-            return s_bool_settings[ static_cast<size_t>( Boolean_Options::Start_Fullscreen ) ] ? "true" : "false";
-        case Option_Field::Screen_Width:
-            CP_CORE_WARN( "Returning bool ({}) as a string.", get_field_string( field ) );
-            return Util::to_string( s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Screen_Width ) ] );
-            //return std::format( "{}", s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Screen_Width ) ] );
-        case Option_Field::Screen_Height:
-            CP_CORE_WARN( "Returning bool ({}) as a string.", get_field_string( field ) );
-            return Util::to_string( s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Screen_Height ) ] );
-            //return std::format( "{}", s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Screen_Height ) ] );
-        case Option_Field::Log_Level:
-            CP_CORE_WARN( "Returning bool ({}) as a string.", get_field_string( field ) );
-            return Util::to_string( s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Log_Level ) ] );
-            //return std::format( "{}", s_uint_settings[ static_cast<size_t>( Unsigned_Integer_Options::Log_Level ) ] );
-        case Option_Field::Application_Name:
-            return s_str_settings[ static_cast<size_t>( String_Options::Application_Name ) ];
-        }
-        return "";
-    }
     
-
-
-    std::string get_field_string( Option_Field field )
+    
+    bool Capsaicin_Settings::set_exe_name( std::string exe )
     {
-        switch( field )
-        {
-        case Option_Field::Start_Fullscreen:  return "start_fullscreen";
-        case Option_Field::Screen_Width:      return "screen_width";
-        case Option_Field::Screen_Height:     return "screen_height";
-        case Option_Field::Log_Level:         return "log_level";
-        case Option_Field::Application_Name:  return "app_name";
-
-        default: return "UNKNOWN // ERROR";
-        }
+        s_str_settings[ static_cast<size_t>( String_Options::Executable_Name ) ] = exe;
+        return SUCCESS;
     }
 }

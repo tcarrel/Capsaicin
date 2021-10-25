@@ -7,9 +7,6 @@
     <Filter Include="..\Capsaicin">
       <UniqueIdentifier>{BB634C9B-A7C6-DB3F-504C-14F63C8EA7C2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="..\Capsaicin\vendor">
-      <UniqueIdentifier>{B819C9B3-247B-A6C1-ADE8-EC731949DD80}</UniqueIdentifier>
-    </Filter>
     <Filter Include="..\Test_App">
       <UniqueIdentifier>{D094CEF7-3C4A-47ED-C53E-41C431F33DF1}</UniqueIdentifier>
     </Filter>
@@ -17,9 +14,6 @@
   <ItemGroup>
     <None Include="..\..\Capsaicin\premake5.lua">
       <Filter>..\Capsaicin</Filter>
-    </None>
-    <None Include="..\..\Capsaicin\vendor\premake5.lua">
-      <Filter>..\Capsaicin\vendor</Filter>
     </None>
     <None Include="..\..\Test_App\premake5.lua">
       <Filter>..\Test_App</Filter>

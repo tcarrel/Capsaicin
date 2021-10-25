@@ -28,5 +28,20 @@ namespace Capsaicin
             lowercase( copy );
             return copy;
         }
+
+
+
+        std::string bool_to_string( bool true_or_false )
+        {
+            if( true_or_false )
+            {
+                return "true";
+            }
+            else
+            {
+                return "false";
+            }
+        }
+
     }
 }
